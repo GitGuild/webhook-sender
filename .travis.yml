@@ -1,0 +1,17 @@
+language: python
+python:
+  - "2.7"
+
+sudo: false
+
+before_install:
+  - pip install -U coveralls
+
+install:
+  - python setup.py -q install
+
+script:
+  - python setup.py pytest --addopts --cov=webhook_sender
+
+after_success:
+  - coveralls

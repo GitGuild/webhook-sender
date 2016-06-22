@@ -1,8 +1,7 @@
 import sqlalchemy as sa
-import sqlalchemy.orm as orm
 import datetime
-from sqlalchemy.ext.declarative import declarative_base 
- 
+from sqlalchemy.ext.declarative import declarative_base
+
 Base = declarative_base()
 
 __all__ = ['Webhook']

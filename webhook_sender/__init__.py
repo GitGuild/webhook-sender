@@ -1,10 +1,11 @@
 import ConfigParser
 import logging
+import os
 import requests
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from sqlalchemy import create_engine
-from webhook_sender import models
+from webhook_sender import model
 
 CFG = ConfigParser.ConfigParser()
 CFG.read(os.environ.get('WEBHOOK_SENDER_CONFIG_FILE', 'example_cfg.ini'))

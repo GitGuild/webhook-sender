@@ -7,20 +7,19 @@ classifiers = [
 ]
 
 setup(
-    name='webhook_sender',
-    version='0.0.1',
+    name='webhook-sender',
+    version='0.0.3',
     packages=['webhook_sender'],
-    url='https://bitbucket.org/isysd/webhook_sender',
+    url='https://github.com/gitguild/webhook_sender',
     license='MIT',
     classifiers=classifiers,
     author='Ira Miller',
-    author_email='ira@deginner.com',
+    author_email='ira@gitguild.com',
     description='A helper for sending webhooks, with automatic retry and CLI.',
     setup_requires=['pytest-runner'],
     install_requires=[
         'sqlalchemy>=1.0.9',
-        'requests',
-        'service'
+        'requests'
     ],
-    tests_require=['pytest', 'flask>=0.10.0']
+    tests_require=['pytest', 'flask>=0.10.0', 'pytest-flask', 'pytest-cov']
 )
