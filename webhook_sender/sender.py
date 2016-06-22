@@ -67,4 +67,4 @@ def send_all():
 
 
 if __name__ == "__main__":
-    more = send_all()\
+    more = send_all()

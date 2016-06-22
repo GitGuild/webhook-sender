@@ -8,7 +8,7 @@ classifiers = [
 
 setup(
     name='webhook-sender',
-    version='0.0.3',
+    version='0.1.0',
     packages=['webhook_sender'],
     url='https://github.com/gitguild/webhook_sender',
     license='MIT',
