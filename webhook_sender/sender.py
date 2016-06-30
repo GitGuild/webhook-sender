@@ -1,5 +1,9 @@
+import sys
 import datetime
+import argparse
+
 import requests
+
 from webhook_sender import CFG, models, logger, ses
 
 MULTIPLIER = int(CFG.get('webhook', 'MULTIPLIER'))
@@ -66,5 +70,38 @@ def send_all():
     return response
 
 
+def main(sys_args=sys.argv[1:]):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("command", choices=["add", "status"])
+    parser.add_argument("--url", help="the URL to send the webhook to")
+    parser.add_argument("--message", help="the message to send")
+    parser.add_argument("--retryat",
+                        help="UNIX time to retry webhook send",
+                        type=datetime.datetime)
+    parser.add_argument("--attempts",
+                        help="number of attempts to send webhook",
+                        type=int)
+
+    args = parser.parse_args(sys_args)
+
+    if args.command == "add":
+        url = args.url
+        message = args.message
+        retryat = args.retryat
+
+        if url is None or message is None:
+            parser.error("add command needs --url and --message.\n"\
+                         "example: ./sender.py add --url {url}"\
+                         " --message {message}")
+
+        hook  = models.Webhook(url=url, message=message, retryat=retryat)
+        ses.add(hook)
+        ses.commit()
+    elif args.command == "status":
+        hooks = ses.query(models.Webhook)\
+            .filter(models.Webhook.received==False,
+                    models.Webhook.retryat<=datetime.datetime.utcnow()).count()
+        print "%s active hooks to send" % hooks
+
 if __name__ == "__main__":
-    more = send_all()
+    main()
