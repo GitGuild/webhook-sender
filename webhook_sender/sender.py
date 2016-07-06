@@ -23,7 +23,6 @@ def send_webhook(webhook, commit=False):
     try:
         r = requests.post(str(webhook.url), data=str(webhook.message))
     except Exception as e:
-        print e
         logger.exception(e)
     if r is not None and r.status_code == 200:
         webhook.received = True
@@ -40,7 +39,6 @@ def send_webhook(webhook, commit=False):
         try:
             ses.commit()
         except Exception as e:
-            print e
             logger.exception(e)
             ses.rollback()
             ses.flush()
