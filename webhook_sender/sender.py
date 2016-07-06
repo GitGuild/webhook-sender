@@ -152,7 +152,7 @@ def main(sys_args=sys.argv[1:]):
                                                          hook.retryat,
                                                          hook.received,
                                                          hook.attempts)
-            else:
+            elif hooks.count():
                 print "(use --list for more details)"
 
     # temporary behavior of "send" preliminar to issue #3
