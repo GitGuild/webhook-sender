@@ -31,7 +31,8 @@ def send_webhook(webhook, commit=False):
         logger.info("webhook to %s succeeded" % webhook.url)
     else:
         print "webhook to %s failed" % webhook.url
-        logger.info("webhook to %s send failed attempt %s" % (webhook.url, webhook.attempts))
+        logger.info("webhook to %s send failed attempt %s" % (webhook.url,
+                                                              webhook.attempts))
         retryin = datetime.timedelta(seconds=MULTIPLIER ** RETRIES)
         webhook.retryat = datetime.datetime.utcnow() + retryin
     ses.add(webhook)
@@ -44,15 +45,17 @@ def send_webhook(webhook, commit=False):
             ses.rollback()
             ses.flush()
 
+
 def send_all():
     """
     Send all webhooks that are ready for a retry.
     :return: True if there are more webhooks to send, otherwise False
     :rtype: bool
     """
-    hooks = ses.query(models.Webhook).filter(models.Webhook.received == False,
-                                             models.Webhook.retryat <= datetime.datetime.utcnow(),
-                                             models.Webhook.attempts <= RETRIES)
+    hooks = ses.query(models.Webhook)\
+        .filter(models.Webhook.received == False,
+                models.Webhook.retryat <= datetime.datetime.utcnow(),
+                models.Webhook.attempts <= RETRIES)
     response = True
     if hooks.count() == 0:
         return False
@@ -74,9 +77,9 @@ def send_all():
 
 def main(sys_args=sys.argv[1:]):
     parser = argparse.ArgumentParser(prog="webhook-sender",
-                                     description="A simple program to manage"\
-                                                 " the sending of webhooks"\
-                                                 " registered in an SQL"\
+                                     description="A simple program to manage"
+                                                 " the sending of webhooks"
+                                                 " registered in an SQL"
                                                  " database.")
 
     parser.add_argument("command", choices=["add", "status", "cancel", "send"])
@@ -99,11 +102,11 @@ def main(sys_args=sys.argv[1:]):
         retryat = args.retryat
 
         if url is None or message is None:
-            parser.error("add command needs --url and --message.\n"\
-                         "example: ./sender.py add --url {url}"\
+            parser.error("add command needs --url and --message.\n"
+                         "example: ./sender.py add --url {url}"
                          " --message {message}")
 
-        hook  = models.Webhook(url=url, message=message, retryat=retryat)
+        hook = models.Webhook(url=url, message=message, retryat=retryat)
         ses.add(hook)
         ses.commit()
         print "Webhook has been added"
@@ -112,10 +115,10 @@ def main(sys_args=sys.argv[1:]):
         hid = args.id
 
         if hid is None:
-            parser.error("cancel command needs --id\n"\
+            parser.error("cancel command needs --id\n"
                          "example: ./sender.py cancel --id {id}")
 
-        hook = ses.query(models.Webhook).filter(models.Webhook.id==hid)
+        hook = ses.query(models.Webhook).filter(models.Webhook.id == hid)
         if hook.count():
             hook.delete()
             ses.commit()
@@ -126,7 +129,7 @@ def main(sys_args=sys.argv[1:]):
     if args.command == 'status':
         if args.id:
             hid = args.id
-            hook = ses.query(models.Webhook).filter(models.Webhook.id==hid)\
+            hook = ses.query(models.Webhook).filter(models.Webhook.id == hid)\
                 .first()
             if hook is None:
                 print "Hook with id %d not found" % hid
@@ -138,8 +141,8 @@ def main(sys_args=sys.argv[1:]):
                                         hook.attempts)
         else:
             hooks = ses.query(models.Webhook)\
-                .filter(models.Webhook.received==False,
-                        models.Webhook.retryat<=datetime.datetime.utcnow())
+                .filter(models.Webhook.received == False,
+                        models.Webhook.retryat <= datetime.datetime.utcnow())
             print "%d active hooks to send" % hooks.count()
 
             if hooks.count() and args.list is True:
@@ -162,7 +165,7 @@ def main(sys_args=sys.argv[1:]):
         if hid is None:
             send_all()
         else:
-            hook = ses.query(models.Webhook).filter(models.Webhook.id==hid)
+            hook = ses.query(models.Webhook).filter(models.Webhook.id == hid)
             if hook.count():
                 send_webhook(hook.first(), commit=True)
             else:
